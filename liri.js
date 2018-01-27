@@ -32,14 +32,8 @@ if (requestPhrase === "my-tweets") {
 var songInput = process.argv[3];
 var defaultSong = "In the end"
 
-if (requestPhrase === "spotify-this-song" && songInput === undefined) {
-    songInput = defaultSong;
-    console.log("You did not choose, so I chose for you!");
-}
-
-if (requestPhrase === "spotify-this-song") {
-
-    spotify.search({
+function doSongSearch(songInput) {
+	spotify.search({
             type: "track",
             query: songInput
         },
@@ -49,12 +43,33 @@ if (requestPhrase === "spotify-this-song") {
                 return;
             }
             // var dataParsed = JSON.parse(data);
-            var songs = data.tracks.items;
-            // console.log(songs[i].album.artists);
-            for (var i = 0; i < 5; i++) {
-                console.log(songs[i].album.artists);
+            var song = data.tracks.items[0];
+            // console.log("###########################\n", song);
+            var albumName = song.album.name;
+            var songName = song.name;
+            var songLink = song.preview_url;
+
+            console.log("Album Name:", albumName);
+            console.log("Song Name:", songName);
+            console.log("Song Link:", songLink)
+            // var artistsNames = song.artists[0].name
+
+            for (var i = 0; i < song.artists.length; i++) {
+            	var artist = song.artists[i];
+            	console.log("Artists:", artist.name);
+
             }
         });
+}
+
+
+if (requestPhrase === "spotify-this-song" && songInput === undefined) {
+    songInput = defaultSong;
+    console.log("You did not choose, so I chose for you!");
+}
+
+if (requestPhrase === "spotify-this-song") {
+	doSongSearch(songInput)
 };
 
 // ================================OMDB ==========================================
@@ -93,7 +108,6 @@ if (requestPhrase === "do-what-it-says") {
         }
         console.log("node liri.js " + data);
 
-
         // console.log(data);
 
         var dataArr = data.split(",");
@@ -110,5 +124,3 @@ if (requestPhrase === "do-what-it-says") {
 //      * A preview link of the song from Spotify
 
 //      * The album that the song is from
-
-//    * If no song is provided then your program will default to "The Sign" by Ace of Base.
